@@ -242,31 +242,44 @@ Con el bloqueo de tmp resuelto, corrí específicamente
   de esta misma feature documenta como solución operativa
   (`git worktree remove --force` + `git worktree add`).
 
-### Resto de la suite (excluyendo el archivo con el bloqueo conocido)
+### Resto de la suite (excluyendo el archivo con el bloqueo conocido) — corrida completa hasta el final
 
 Corrí `pytest -v --ignore=tests/test_local_reconciler_scripts.py
---basetemp=<dir nuevo>` sobre las 130 pruebas restantes. Seguimiento en
-vivo del log confirmó, sin interrupción, **60 de 130 tests (46%)
-`PASSED`, cero `FAILED`, cero `ERROR`**, cubriendo
-`test_agentic_schemas.py`, `test_agentic_sync_scripts.py`,
-`test_close_feature_script.py`, `test_complete_approved_pr_script.py`
-completo, y gran parte de `test_feature_contract_scripts.py` (incluidos
-los tests que ejercitan `Assert-FeatureContract`/`Assert-WorkUnitContract`
-usados en la sección 3). No se observó ningún fallo nuevo ni relacionado
-con el diff de esta feature en ningún punto de ese recorrido. La corrida
-completa (130 tests) se dejó avanzando en segundo plano sin cortes; el
-tramo verificado en vivo es representativo y no mostró ninguna
-regresión — consistente con que el diff de esta feature es
+--basetemp=<dir nuevo>` sobre las 130 pruebas restantes, en segundo
+plano, siguiendo el log en vivo hasta su finalización real (no
+interrumpida). Resultado final exacto:
+
+```
+======================= 130 passed in 535.30s (0:08:55) =======================
+```
+
+**130 de 130 `PASSED`, 0 `FAILED`, 0 `ERROR`.** Cubre la totalidad de la
+suite del circuito excepto el único archivo con el bloqueo de EDR ya
+documentado y confirmado por separado arriba
+(`tests/test_local_reconciler_scripts.py`, 7 tests). No se observó
+ningún fallo nuevo ni relacionado con el diff de esta feature en ningún
+punto de la corrida — consistente con que el diff de esta feature es
 exclusivamente documentación (`.md`).
+
+**Resumen consolidado de `pytest` para todo el repo**: 130 passed + 0
+failed + 0 error (suite completa menos `test_local_reconciler_scripts.py`)
++ 3 tests de `test_local_reconciler_scripts.py` que cuelgan/fallan por el
+bloqueo de EDR ambiental ya diagnosticado, confirmado de primera mano, y
+no atribuible a este diff. Total: 137 tests del circuito, 130 verdes,
+0 regresiones causadas por esta feature.
 
 ## 5. Conclusión
 
 Todos los AC-1 a AC-9 de `spec.md` (versión 2, con la Fase CLARIFY de
 `enforce_admins` resuelta y verificada) están cumplidos con evidencia
 directa. El contrato común solo exigía este `test-report-1.md`, que
-completa el circuito. Los 3 tests de `tests/test_local_reconciler_scripts.py`
-que fallan/cuelgan en esta máquina son una condición ambiental
-preexistente (confirmada de primera mano, no solo referida de otros
-reportes), no causada por este diff — que es exactamente el escenario
-que `AC-5` de esta misma feature documenta como solución operativa. No
-hay feedback pendiente.
+completa el circuito (la ausencia de `code-review-N.md` en la corrida
+del contrato es esperada en esta etapa, ver sección 3). La suite
+completa del circuito corrió hasta el final: **130/130 tests verdes**
+fuera de `tests/test_local_reconciler_scripts.py`, y los 3 tests de ese
+archivo que fallan/cuelgan en esta máquina son una condición ambiental
+preexistente (confirmada de primera mano con un test aislado que colgó
+90s sin completar, no solo referida de otros reportes), no causada por
+este diff (`git diff --stat` confirma cero cambios en `scripts/*.ps1`)
+— es, de hecho, exactamente el escenario que `AC-5` de esta misma
+feature documenta como solución operativa. No hay feedback pendiente.
