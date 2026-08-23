@@ -91,9 +91,12 @@ Fuentes consultadas:
   automatizable)" ya existe con el patrón exacto a extender (bullets con
   pasos manuales de una sola vez, algunos con comandos exactos). Sección
   "Git" confirma que el circuito automatizado solo crea/mergea PRs
-  contra `develop`, nunca contra `main` directamente. Sección "CI/CD"
-  confirma que `.github/workflows/ci.yml` corre pytest en un job llamado
-  `test`.
+  contra `develop`, nunca contra `main` directamente, y establece la
+  regla dura "Nunca commitear directo a `develop`... ni nunca directo a
+  `main`" sin excepción declarada para administradores — fuente decisiva
+  para resolver la Fase CLARIFY de `enforce_admins` (ver
+  "Clarificaciones realizadas"). Sección "CI/CD" confirma que
+  `.github/workflows/ci.yml` corre pytest en un job llamado `test`.
 - **`.claude/rules/`**: confirmado vacío (solo `.gitkeep`), sin reglas
   de dominio adicionales que apliquen.
 - **`docs/tecnica/circuito-agentico.md`**: documenta hoy la mecánica del
@@ -151,12 +154,12 @@ Fuentes consultadas:
   criterio de aceptación estándar de "verificación manual reproducible
   cuando corresponda" de `AGENTS.md`, sección "Circuito", paso 4).
 
-No hubo ambigüedad material sin resolver: el pedido humano ya
-proporcionó el detalle operativo necesario (comportamiento observado del
-EDR, alcance del problema, solución exacta) y el resto de las decisiones
-(nombre del status check actual, ubicación del doc de troubleshooting,
-uso de `gh api` vs. UI) se resuelven con evidencia existente del repo.
-No hizo falta Fase CLARIFY.
+Esta versión 2 de la spec resuelve el feedback de `audit-1.md`: (a) el
+valor de `enforce_admins` dejó de ser un supuesto unilateral y pasó por
+Fase CLARIFY, con la respuesta registrada en "Clarificaciones
+realizadas"; (b) se agregó el caso borde faltante sobre la semántica de
+reemplazo total del `PUT` de branch protection, con su propio criterio
+de aceptación (AC-4).
 
 ## Criterios de aceptación
 
@@ -172,8 +175,11 @@ No hizo falta Fase CLARIFY.
   `{repo}`, resueltos automáticamente por `gh api` desde el contexto del
   repositorio), que aplican esos 4 requisitos sobre `develop` de forma
   declarativa (una sola invocación reproducible, sin efectos
-  destructivos sobre datos o historial). Debe quedar documentada la
-  justificación técnica de por qué `gh api` es seguro/confiable para
+  destructivos sobre datos o historial del repositorio). El payload
+  documentado fija `enforce_admins: true`, para que los administradores
+  del repositorio queden también sujetos a la protección, sin excepción
+  de bypass — ver "Clarificaciones realizadas". Debe quedar documentada
+  la justificación técnica de por qué `gh api` es seguro/confiable para
   esta operación (ver "Contexto y fuentes"/"Supuestos"), en vez de solo
   pasos manuales de UI.
 - **AC-3**: El bullet deja explícito, junto al comando, que el nombre
@@ -182,7 +188,17 @@ No hizo falta Fase CLARIFY.
   `04-ci-wiring-product-tests` renombra o separa ese job al mergearse,
   este checklist debe actualizarse antes de aplicarse (dependencia
   declarada explícitamente, no bloqueante para esta spec).
-- **AC-4**: `docs/tecnica/circuito-agentico.md` contiene una sección
+- **AC-4**: El bullet advierte explícitamente que el `PUT` de branch
+  protection documentado **reemplaza toda la configuración de branch
+  protection existente sobre `develop`, no la fusiona incrementalmente**
+  con reglas ya configuradas manualmente desde la UI de GitHub (por
+  ejemplo "require signed commits", "require linear history",
+  restricciones de push por equipo), y recomienda correr primero el
+  comando de verificación de solo lectura (`GET`, ya documentado por
+  AC-2) antes de volver a ejecutar el `PUT` — en particular en el
+  escenario ya cubierto por AC-3 de actualizar el nombre del status
+  check — para no pisar en silencio protecciones adicionales.
+- **AC-5**: `docs/tecnica/circuito-agentico.md` contiene una sección
   nueva de troubleshooting sobre bloqueos de
   `local-feature-reconcile.ps1`/`ready-for-pr.ps1` en máquinas Windows
   con EDR/antivirus agresivo, con: síntoma observable, causa (el EDR
@@ -190,19 +206,20 @@ No hizo falta Fase CLARIFY.
   (exclusivamente local; no corrompe el estado de git remoto ni afecta
   CI/merge) y la solución exacta con los comandos `git worktree remove
   --force <path>` seguido de `git worktree add <path-nuevo> <rama>`.
-- **AC-5**: Debe existir `docs/tecnica/operational-readiness-docs.md`,
+- **AC-6**: Debe existir `docs/tecnica/operational-readiness-docs.md`,
   no vacío, con las decisiones de diseño/implementación relevantes (por
   qué `gh api` sobre UI manual, por qué solo `develop` y no `main`, por
-  qué el troubleshooting vive en `circuito-agentico.md`).
-- **AC-6**: Debe existir `docs/usuario/operational-readiness-docs.md`,
+  qué `enforce_admins: true`, por qué el troubleshooting vive en
+  `circuito-agentico.md`).
+- **AC-7**: Debe existir `docs/usuario/operational-readiness-docs.md`,
   no vacío, con el propósito de la feature y cómo usar ambos checklists
   (cuándo correr el comando de branch protection, cuándo seguir el
   procedimiento de troubleshooting de EDR).
-- **AC-7**: Debe existir
+- **AC-8**: Debe existir
   `runs/05-operational-readiness-docs/decision.md`, con decisiones
   demostrables desde spec/plan/tasks/auditoría/implementación, sin
   afirmar aprobación de merge.
-- **AC-8**: Deben existir enlaces exactos y únicos a
+- **AC-9**: Deben existir enlaces exactos y únicos a
   `operational-readiness-docs.md` en la zona `FEATURE_LINKS` de
   `docs/tecnica/index.md` y `docs/usuario/index.md` respectivamente (vía
   `scripts/update-doc-indexes.ps1`).
@@ -226,11 +243,26 @@ No hizo falta Fase CLARIFY.
   comando (mirar el nombre del job en la pestaña Actions de una PR
   reciente, o `gh api repos/{owner}/{repo}/commits/{sha}/check-runs`) en
   vez de asumirlo ciegamente.
+- **El `PUT` reemplaza, no fusiona, la configuración existente**: el
+  endpoint de branch protection de GitHub sobrescribe por completo la
+  configuración vigente de la rama con el payload enviado — no hace un
+  merge incremental con reglas ya activas configuradas manualmente
+  desde la UI (por ejemplo "require signed commits", "require linear
+  history", restricciones de push por equipo/usuario). Si esas reglas
+  existieran y se reaplica el `PUT` documentado sin incluirlas en el
+  payload, se pierden silenciosamente. El checklist debe advertir esta
+  semántica explícitamente y recomendar correr primero el `GET` de
+  verificación (ya documentado) para revisar qué hay configurado antes
+  de reemplazar — en particular antes de cualquier re-ejecución, como la
+  del caso borde anterior de status check desactualizado.
 - **Re-ejecución del comando de branch protection**: el `PUT` de la API
-  de branch protection es declarativo/idempotente — volver a correrlo
-  con el mismo payload dos veces no crea duplicados ni falla la segunda
-  vez. El checklist debe dejarlo explícito para que el operador no dude
-  en volver a correrlo tras un cambio.
+  de branch protection es declarativo/idempotente respecto de sí mismo
+  — volver a correrlo con el mismo payload dos veces seguidas no crea
+  duplicados ni falla la segunda vez —, pero no es "aditivo" respecto de
+  configuración externa a ese payload (ver ítem anterior). El checklist
+  debe distinguir ambas cosas: seguro re-ejecutar el mismo payload, no
+  seguro re-ejecutarlo sin revisar antes si hay reglas adicionales que
+  perderías.
 - **JSON del payload inválido por error de tipeo al copiar/pegar**: debe
   documentarse un paso de verificación local sin credenciales (validar
   el JSON con `ConvertFrom-Json` en PowerShell antes de enviarlo) para
@@ -268,11 +300,13 @@ No hizo falta Fase CLARIFY.
   repos/{owner}/{repo}/branches/develop/protection` es una operación
   declarativa sobre configuración del repositorio (no sobre datos,
   código o historial), reversible (se puede volver a aplicar con otro
-  payload o desactivar desde la misma API/UI), e idempotente. Por eso se
-  documenta como comando `gh` ejecutable en vez de únicamente pasos
-  manuales de la UI de GitHub. Se documenta también, como alternativa,
-  los pasos exactos de UI equivalentes por si el operador no confía en
-  correr el comando o `gh` no está disponible en su máquina.
+  payload o desactivar desde la misma API/UI), aunque de reemplazo total
+  respecto de configuración externa al payload (ver "Casos borde"). Por
+  eso se documenta como comando `gh` ejecutable en vez de únicamente
+  pasos manuales de la UI de GitHub. Se documenta también, como
+  alternativa, los pasos exactos de UI equivalentes por si el operador
+  no confía en correr el comando o `gh` no está disponible en su
+  máquina.
 - **Nombre del status check = `test`**: se basa en el estado ACTUAL de
   `.github/workflows/ci.yml` en este worktree (job único `test`, sin
   `name:` de override, por lo que GitHub Actions expone el check como
@@ -281,14 +315,6 @@ No hizo falta Fase CLARIFY.
   que se aplique este checklist, el nombre documentado quedará
   desactualizado — se declara como dependencia explícita, no como
   ambigüedad material bloqueante (ver AC-3 y "Casos borde").
-- **`enforce_admins: false` en el payload documentado**: el ítem de
-  `ROADMAP.md` no pide explícitamente que la protección aplique también
-  a administradores del repositorio. Se documenta `false` (los admins
-  pueden seguir empujando en escenarios excepcionales) como valor por
-  defecto conservador para no bloquear al humano ante un incidente
-  operativo, dejándolo explícito para que el operador lo cambie a `true`
-  si decide endurecerlo — es un campo obligatorio de la API (no se puede
-  omitir), no una decisión de negocio.
 - **Ubicación del troubleshooting de EDR**: se agrega a
   `docs/tecnica/circuito-agentico.md` (no un archivo nuevo) porque ese
   documento ya es la fuente técnica del comportamiento de
@@ -302,15 +328,17 @@ No hizo falta Fase CLARIFY.
 
 ## Clarificaciones realizadas
 
-Ninguna. El pedido humano adicional (fuera de `ROADMAP.md`) ya resolvió
-por adelantado la única ambigüedad material previsible (el nombre del
-status check dependiente de la feature `04` en curso), indicando
-explícitamente que debía tratarse como supuesto declarado, no como
-bloqueo. El resto de las decisiones (ubicación del doc de
-troubleshooting, `gh api` vs. UI, rama a proteger) son técnicas/
-operativas, resolubles con evidencia existente del repo — no decisiones
-de producto, negocio, UX, seguridad de datos o permisos que ameriten
-Fase CLARIFY.
+- **Pregunta**: ¿`enforce_admins` debe ser `true` o `false` en el
+  payload de branch protection documentado, dado que el ítem de
+  `ROADMAP.md` no lo especifica (solo pide PR obligatoria, status check,
+  1 aprobación y dismiss stale approvals) y esto determina si los
+  administradores del repositorio pueden bypassear esa misma protección?
+  **Respuesta**: `true`. Los administradores también deben quedar
+  sujetos a la protección — consistente con la regla dura ya existente
+  en `AGENTS.md` ("Nunca commitear directo a `develop`... ni nunca
+  directo a `main`"), sin excepción, aceptando que en un incidente
+  operativo excepcional no haya bypass automático disponible para
+  admins.
 
 ## Decisiones pendientes bloqueantes
 
