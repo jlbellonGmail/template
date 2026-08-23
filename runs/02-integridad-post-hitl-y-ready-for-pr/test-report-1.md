@@ -231,6 +231,19 @@ funciones y tests nuevos (`test_ready_for_pr_blocks_roadmap_mutation_when_contra
   ya devuelve rutas relativas `runs/<slug>/...` (reutilizada sin cambios,
   confirmado en `scripts/feature-contract.ps1`).
 
+> **Nota de corrección (post `code-review-1.md`, rejected):** la
+> afirmación anterior es incorrecta. `Get-LatestVerdictArtifact.Path` se
+> construye con `$latest.File.FullName`, que en .NET/PowerShell siempre
+> devuelve una ruta absoluta, no `runs/<slug>/...`. Esta verificación fue
+> por lectura de código mal interpretada, no empírica (no se inspeccionó
+> el contenido real de `captured-body.md` en los tests para confirmar el
+> formato de la ruta). El bug real, la corrección aplicada en
+> `scripts/ready-for-pr.ps1` y el refuerzo de ambos tests para detectar
+> path absolutos quedan documentados en `code-review-1.md` y en
+> `docs/tecnica/integridad-post-hitl-y-ready-for-pr.md` (sección GAP C).
+> Esta corrección debe ser re-verificada empíricamente por la próxima
+> pasada de `qa-agent` en `test-report-2.md`, no asumida por esta nota.
+
 ## Conclusión
 
 Los 15 AC de `spec.md` están cumplidos con evidencia verificable

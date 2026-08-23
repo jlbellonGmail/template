@@ -131,11 +131,25 @@ No se toca `scripts/local-feature-reconcile.ps1`,
   - Reemplazar los literales `$($info.RunDir)/audit-N.md`,
     `$($info.RunDir)/test-report-N.md`,
     `$($info.RunDir)/code-review-N.md` (ambas ramas, Feature y
-    Milestone) por `$($auditArtifact.Path)`, `$($qaArtifact.Path)`,
-    `$($codeReviewArtifact.Path)` respectivamente. `Get-LatestVerdictArtifact`
-    ya devuelve una ruta relativa consistente con el resto de la
-    sección de evidencias (mismo formato `runs/<slug>/...`, ver caso
-    borde de encoding/rutas en spec.md).
+    Milestone) por una referencia a la ruta relativa real del archivo
+    resuelto.
+  - **Corrección post-`code-review-1.md` (rejected):** este plan
+    originalmente asumía, sin haberlo verificado contra el código real,
+    que `Get-LatestVerdictArtifact.Path` ya devolvía una ruta relativa.
+    Es falso: esa propiedad se construye con `$latest.File.FullName`, y
+    `System.IO.FileInfo.FullName` en .NET/PowerShell siempre devuelve
+    una ruta absoluta. Interpolar `$($auditArtifact.Path)` /
+    `$($qaArtifact.Path)` / `$($codeReviewArtifact.Path)` directamente
+    filtraba esa ruta absoluta al cuerpo público de la PR (caso borde de
+    encoding/rutas en spec.md: "sin rutas absolutas del entorno del
+    agente"). La implementación final NO cambia
+    `Get-LatestVerdictArtifact` (para no afectar a
+    `Assert-LatestVerdictApproved`, su otro consumidor); en su lugar,
+    `ready-for-pr.ps1` recompone la ruta relativa en el punto de uso:
+    `"$($info.RunDir)/$(Split-Path -Leaf $auditArtifact.Path)"` (y
+    análogas para QA/code review), y son esas variables (`$auditPath`,
+    `$qaPath`, `$codeReviewPath`) las que se interpolan en
+    `$evidenceSection` y en el checklist.
   - Milestone usa el mismo `$info.RunDir` (`runs/milestone-<slug>/`) —
     un único set de veredictos a nivel de work unit, tal como ya lo
     trata `Assert-WorkUnitContract` para Milestone.

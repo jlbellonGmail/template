@@ -9,6 +9,11 @@ Este documento no otorga ni implica esa aprobacion.
 
 ## Evidencias revisadas
 
+Estos son los artefactos esperados del circuito para esta feature; no
+implica que todos ya existieran ni hubieran sido leídos en el momento
+exacto en que se escribió esta lista (p. ej. `code-review-1.md` se
+produce en un paso posterior del circuito, después de `test-report-1.md`):
+
 - `runs/02-integridad-post-hitl-y-ready-for-pr/spec.md`
 - `runs/02-integridad-post-hitl-y-ready-for-pr/plan.md`
 - `runs/02-integridad-post-hitl-y-ready-for-pr/tasks.md`
