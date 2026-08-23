@@ -34,7 +34,8 @@
 - **T-04** — Actualizar la sección "CI/CD" de `AGENTS.md`: reemplazar la
   descripción del job único `test` por la descripción de
   `circuit-tests` y `product-tests`, dejando explícito que ambos son
-  gate obligatorio con el mismo nivel de exigencia, como referencia para
+  gate obligatorio con el mismo nivel de exigencia (decisión confirmada
+  por el humano en Fase CLARIFY, no un supuesto), como referencia para
   el checklist de branch protection de `05-operational-readiness-docs`.
   Verificación: lectura de `AGENTS.md` — ya no menciona un job único
   llamado `test`.
@@ -58,11 +59,12 @@
 - **T-06** — Escribir `docs/tecnica/ci-wiring-product-tests.md` con las
   decisiones de diseño: por qué dos jobs, por qué `product-tests` queda
   documentado como requerido/bloqueante desde ya pese a estar vacío
-  (razonamiento de "Supuestos" de `spec.md`), forma exacta del
-  marcador, y la advertencia de migración de nombre de status check
-  para adopciones downstream.
+  (decisión confirmada por el humano en Fase CLARIFY, ver
+  "Clarificaciones realizadas" de `spec.md` — no un supuesto propio),
+  forma exacta del marcador, y la advertencia de migración de nombre de
+  status check para adopciones downstream.
   Verificación: el archivo existe y no está vacío.
-  Traza: AC-8.
+  Traza: AC-5, AC-8.
   Depende de: T-01, T-02.
 
 - **T-07** — Escribir `docs/usuario/ci-wiring-product-tests.md` con el

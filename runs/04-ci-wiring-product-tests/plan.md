@@ -39,9 +39,9 @@ infraestructura del circuito, no conocimiento de producto).
 - **`AGENTS.md`, sección "CI/CD"** (AC-5, AC-6): reemplazar el bullet
   actual que describe un único job `test` por una descripción de los dos
   jobs reales (`circuit-tests`, `product-tests`), su propósito y que
-  ambos son gate obligatorio (mismo nivel de exigencia), dejando la
-  referencia explícita para el checklist de branch protection de
-  `05-operational-readiness-docs`.
+  ambos son gate obligatorio (mismo nivel de exigencia, confirmado en
+  Fase CLARIFY con el humano), dejando la referencia explícita para el
+  checklist de branch protection de `05-operational-readiness-docs`.
 - **Test de estructura del workflow** (AC-7): nuevo archivo
   `tests/test_ci_workflow.py` (o una función agregada a
   `tests/test_feature_contract_scripts.py`, decidido por builder-agent
@@ -55,9 +55,10 @@ infraestructura del circuito, no conocimiento de producto).
   actual), sin parsear YAML.
 - **`docs/tecnica/ci-wiring-product-tests.md`** (AC-8): documenta por
   qué se separó en dos jobs, por qué `product-tests` se documenta como
-  requerido desde ya (razonamiento de "Supuestos" de `spec.md`), y la
-  forma exacta del marcador para que quede consistente si alguien lo
-  reemplaza manualmente.
+  requerido desde ya (razonamiento confirmado por el humano en Fase
+  CLARIFY, ver "Clarificaciones realizadas" de `spec.md`), la forma
+  exacta del marcador, y la advertencia de migración de nombre de status
+  check para adopciones downstream.
 - **`docs/usuario/ci-wiring-product-tests.md`** (AC-9): explica, para
   quien opera el repo, cómo se ven los dos checks en la pestaña
   "Checks" de una PR/Actions, y los pasos concretos para reemplazar el
@@ -98,9 +99,10 @@ verá dos checks separados en vez de uno: `circuit-tests` y
 `product-tests`. Nadie necesita instalar herramientas nuevas
 localmente. Quien configure branch protection en el futuro (ítem 05)
 deberá marcar ambos jobs como status checks requeridos, según lo
-documentado acá. Quien mantenga el proyecto real que nazca de este
-template tiene un único lugar obvio (el step placeholder de
-`product-tests`) donde pegar los pasos reales de su stack.
+documentado acá y confirmado por el humano en Fase CLARIFY. Quien
+mantenga el proyecto real que nazca de este template tiene un único
+lugar obvio (el step placeholder de `product-tests`) donde pegar los
+pasos reales de su stack.
 
 ## 6. Estrategia de tests
 

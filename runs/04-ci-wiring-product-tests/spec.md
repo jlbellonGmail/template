@@ -97,12 +97,20 @@ trazabilidad" en `AGENTS.md`):
   no incluye `pyyaml`). Esta feature sigue ese mismo patrón para no
   introducir una dependencia de test nueva sin declararla en
   `docs/tecnica/arquitectura.md`.
-- **Decisión sobre requerir `product-tests` en branch protection**: no
-  hay evidencia previa en el repo (branch protection no está configurada
-  todavía; `05-operational-readiness-docs` sigue pendiente). Es una
-  decisión operativa/técnica (no una regla de negocio ni de UX), resuelta
-  acá como supuesto explícito con justificación técnica (ver
-  "Supuestos"), no vía Fase CLARIFY.
+- **Ambigüedad material identificada y resuelta vía Fase CLARIFY**: si
+  `product-tests` debe ser status check requerido/bloqueante en branch
+  protection mientras es solo un placeholder no tenía evidencia previa
+  en el repo (branch protection no está configurada todavía;
+  `05-operational-readiness-docs` sigue pendiente) y es una decisión de
+  gobernanza sobre el circuito (afecta qué bloquea un merge hacia
+  `develop`/`main`), no una convención técnica inequívocamente
+  inferible de código, arquitectura, tests o reglas globales
+  existentes. En el primer intento de esta spec se resolvió (de forma
+  incorrecta) como supuesto propio del `analyst-agent`; `reviewer-agent`
+  lo marcó como `rejected` en `audit-1.md` por deber pasar por Fase
+  CLARIFY. Se elevó como pregunta concreta al humano y su respuesta
+  quedó registrada en "Clarificaciones realizadas": es la base real de
+  AC-5, no un supuesto propio.
 
 ## Criterios de aceptación
 
@@ -131,8 +139,10 @@ trazabilidad" en `AGENTS.md`):
 - **AC-5**: Queda documentado explícitamente, de forma consistente entre
   `docs/tecnica/ci-wiring-product-tests.md` y `AGENTS.md`, que
   `circuit-tests` y `product-tests` deben tratarse como igualmente
-  obligatorios/bloqueantes (mismo nivel de exigencia), como referencia
-  directa para el checklist de branch protection que implementará
+  obligatorios/bloqueantes (mismo nivel de exigencia) — decisión
+  confirmada por el humano en Fase CLARIFY (ver "Clarificaciones
+  realizadas"), no un supuesto propio —, como referencia directa para el
+  checklist de branch protection que implementará
   `05-operational-readiness-docs`.
 - **AC-6**: La sección "CI/CD" de `AGENTS.md` refleja los dos jobs reales
   (`circuit-tests`, `product-tests`), su propósito y su condición de
@@ -189,22 +199,6 @@ trazabilidad" en `AGENTS.md`):
 
 ## Supuestos
 
-- **`product-tests` se documenta como igualmente obligatorio/bloqueante
-  que `circuit-tests` desde ya, aunque hoy no tenga contenido real.**
-  Razonamiento: (1) un job placeholder sin pasos reales siempre puede
-  pasar en verde de forma determinística, así que marcarlo como
-  requerido en branch protection no bloquea a nadie hoy; (2) si en
-  cambio se documentara como informativo/no bloqueante, alguien tendría
-  que acordarse de cambiar la configuración de branch protection el día
-  que el proyecto real agregue tests reales — un paso manual adicional
-  fácil de olvidar, que contradice el objetivo explícito de esta feature
-  de que agregar el stack real sea "trivial"; (3) es consistente con el
-  lenguaje ya existente en `AGENTS.md` ("Gate obligatorio antes de
-  mergear cualquier PR") aplicado hoy al job único. Esta es una decisión
-  operativa/técnica, no una regla de negocio, y se documenta
-  explícitamente para que sea la referencia directa que use
-  `05-operational-readiness-docs` al construir su checklist de branch
-  protection.
 - **`product-tests` corre en `ubuntu-latest`**, igual que
   `circuit-tests` y el job actual, porque no hay ninguna decisión de
   stack/runner distinta documentada en `docs/tecnica/arquitectura.md`.
@@ -223,11 +217,19 @@ trazabilidad" en `AGENTS.md`):
 
 ## Clarificaciones realizadas
 
-Ninguna: la única ambigüedad material identificada (si `product-tests`
-debe ser requerido/bloqueante en branch protection) se resolvió como
-supuesto técnico explícito y justificado (ver "Supuestos"), no como una
-decisión de negocio, UX, seguridad o dominio que admitiera varias
-respuestas válidas sin criterio técnico para desempatar.
+- **Pregunta**: ¿`product-tests` debe ser status check
+  requerido/bloqueante en branch protection desde ya, o solo cuando
+  tenga contenido real de stack?
+  **Respuesta del humano**: Requerido desde ya. Razón dada: el
+  placeholder siempre pasa en verde, así que no bloquea a nadie hoy, y
+  evita tener que acordarse de agregarlo a branch protection el día que
+  el stack real llegue.
+
+  Esta respuesta es la base real de AC-5 y del contenido correspondiente
+  de `docs/tecnica/ci-wiring-product-tests.md` y de la sección "CI/CD"
+  de `AGENTS.md` — ya no es un supuesto propio del `analyst-agent` (en
+  el primer intento de esta spec sí se había tratado como tal, lo cual
+  motivó el `rejected` de `audit-1.md`).
 
 ## Decisiones pendientes bloqueantes
 
