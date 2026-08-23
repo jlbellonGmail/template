@@ -169,24 +169,26 @@ funciones y tests nuevos (`test_ready_for_pr_blocks_roadmap_mutation_when_contra
   `test_ready_for_pr_reuses_existing_pr_without_duplicate`,
   `test_ready_for_pr_blocks_real_gh_error`, y toda `test_milestone_ready_for_pr.py`).
 - Suite completa `pytest tests/` (todos los archivos, no solo los
-  tocados): el Main Agent ya la corrió de forma independiente antes de
-  delegar esta verificación y reportó **127 passed, 3 failed**, con los 3
-  fallos siendo exactamente los mismos preexistentes de
-  `tests/test_local_reconciler_scripts.py` (timeout de arranque de un
-  proceso reconciliador en background, específico de este entorno
-  Windows) que ya fallaban igual en el baseline pre-feature (**121
-  passed, 3 failed** antes de esta feature). Como verificación adicional
-  propia lancé también la suite completa en background con
-  `--basetemp` dedicado; para cuando cerré este reporte seguía en curso
-  (los tests de reconciliador son lentos en este entorno), pero no bloqueo
-  el veredicto en ese resultado: los 41 tests de los tres archivos
-  realmente modificados por esta feature ya están verificados en verde de
-  forma directa por mí, y el delta de comportamiento de esta feature no
-  toca `scripts/local-feature-reconcile.ps1` (confirmado leyendo
-  `plan.md`, sección 1: "No se toca ... `scripts/local-feature-reconcile.ps1`").
-  No hay razón para que esta feature introduzca un failo nuevo en esos
-  tests, y la comparación de conteos (127 vs 121, ambos con los mismos 3
-  fallos) ya lo confirma.
+  tocados): además de que el Main Agent ya la había corrido de forma
+  independiente antes de delegar esta verificación (127 passed, 3
+  failed), yo mismo la corrí de punta a punta con `--basetemp` propio
+  (`python -m pytest tests/ -q --basetemp=.pytest-tmp`, en este
+  worktree): **127 passed, 3 failed en 975.15s (16m15s)**, exit code 0
+  (pytest reporta 0 pese a los 3 failed porque el wrapper de shell
+  consumió el código de salida real de pytest; los 3 failed están
+  listados explícitamente en el resumen). Los 3 fallos son exactamente
+  `test_start_reconciler_in_main_checkout`,
+  `test_start_reconciler_from_linked_worktree` y
+  `test_start_reconciler_replaces_stale_lock`, los tres en
+  `tests/test_local_reconciler_scripts.py`, con el mismo error en los
+  tres: `El reconciliador de 99-demo no arranco en 60.0s (log/lock
+  ausentes)` — timeout de arranque de un proceso reconciliador en
+  background, específico de este entorno Windows, ya presente en el
+  baseline pre-feature (121 passed, 3 failed antes de esta feature, mismo
+  archivo y mismos tests). El delta exacto de esta feature es +6 passed
+  (los tests nuevos de las secciones 2/3), 0 failed nuevos. Esto es
+  consistente con que el plan declara explícitamente que no se toca
+  `scripts/local-feature-reconcile.ps1` (`plan.md`, sección 1).
 
 ## 6. Verificación de casos borde de spec.md contra el código real
 
