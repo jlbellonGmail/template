@@ -1,6 +1,6 @@
 # Audit History
 
-**Versión:** 1.0
+**Versión:** 1.1
 **Estado:** Activo
 
 ---
@@ -47,8 +47,8 @@ Puede crearse en la primera auditoría real.
 ```markdown
 # Quality Score History
 
-| Fecha | Commit | Tag | Perfil | Score bruto | Score final | Confianza | B | C | M | m | Informe |
-|---|---|---|---|---:|---:|---|---:|---:|---:|---:|---|
+| Fecha | Commit | Tag | Perfil | Framework | Estado | Score bruto | Score final | Confianza | B | C | M | m | Informe |
+|---|---|---|---|---|---|---:|---:|---|---:|---:|---:|---:|---|
 ```
 
 Donde:
@@ -65,44 +65,52 @@ m = MINOR
 # 4. Ejemplo
 
 ```markdown
-| Fecha | Commit | Tag | Perfil | Score bruto | Score final | Confianza | B | C | M | m | Informe |
-|---|---|---|---|---:|---:|---|---:|---:|---:|---:|---|
-| 2026-08-29 | a12b34c | - | TEMPLATE 1.0 | 78 | 78 | ALTA | 0 | 0 | 5 | 3 | ../reports/AUDIT-2026-08-29-a12b34c.md |
-| 2026-09-02 | c45d67e | - | TEMPLATE 1.0 | 91 | 91 | ALTA | 0 | 0 | 2 | 2 | ../reports/AUDIT-2026-09-02-c45d67e.md |
-| 2026-09-10 | f89e012 | v1.0.0 | TEMPLATE 1.0 | 100 | 100 | ALTA | 0 | 0 | 0 | 0 | ../reports/AUDIT-2026-09-10-f89e012.md |
+| Fecha | Commit | Tag | Perfil | Framework | Estado | Score bruto | Score final | Confianza | B | C | M | m | Informe |
+|---|---|---|---|---|---|---:|---:|---|---:|---:|---:|---:|---|
+| 2026-08-29 | a12b34c | - | TEMPLATE 1.1 | 1.1 | BASELINE | 78 | 78 | ALTA | 0 | 0 | 5 | 3 | ../reports/AUDIT-2026-08-29-a12b34c-baseline.md |
+| 2026-09-02 | c45d67e | - | TEMPLATE 1.1 | 1.1 | REAUDITORÍA | 91 | 91 | ALTA | 0 | 0 | 2 | 2 | ../reports/AUDIT-2026-09-02-c45d67e-reauditoria.md |
+| 2026-09-10 | f89e012 | v1.0.0 | TEMPLATE 1.1 | 1.1 | RELEASE | 100 | 100 | ALTA | 0 | 0 | 0 | 0 | ../reports/AUDIT-2026-09-10-f89e012-release-v1.md |
 ```
 
 ---
 
 # 5. Una fila por auditoría válida
 
-Cada auditoría completa válida debe generar una fila.
+Cada auditoría completa, consistente y aceptada como resultado oficial debe generar una fila.
 
-No registrar automáticamente:
+No registrar automáticamente como score oficial:
 
 * auditorías abortadas;
 * pruebas parciales;
 * resultados preliminares;
-
-como si fueran scores oficiales.
+* auditorías marcadas `INCONSISTENTE — REQUIERE CORRECCIÓN`;
+* baseline provisionales;
+* auditorías invalidadas.
 
 Pueden documentarse separadamente cuando tengan valor histórico.
 
+Una auditoría sólo puede convertirse en baseline oficial cuando haya pasado la validación de consistencia metodológica definida por el framework.
+
 ---
 
-# 6. Auditorías parciales
+# 6. Auditorías parciales o provisionales
 
 Si se desea registrarlas:
 
 deben indicarse claramente.
 
-Ejemplo:
+Estados posibles:
 
 ```text
 PARCIAL
+PILOTO
+BASELINE PROVISIONAL
+INCONSISTENTE — REQUIERE CORRECCIÓN
 ```
 
-No deben compararse directamente con auditorías completas.
+No deben confundirse ni compararse directamente con auditorías completas oficiales.
+
+Una `BASELINE PROVISIONAL` no debe utilizarse como punto oficial de evolución hasta ser reemplazada por una auditoría completa, consistente y confiable.
 
 ---
 
@@ -112,7 +120,7 @@ Si una auditoría histórica es invalidada:
 
 no debe borrarse necesariamente.
 
-Puede marcarse:
+Debe marcarse:
 
 ```text
 INVALIDADA
@@ -120,7 +128,14 @@ INVALIDADA
 
 con referencia al motivo.
 
-Esto conserva trazabilidad.
+No debe utilizarse para:
+
+* calcular tendencia oficial;
+* establecer baseline;
+* certificar releases;
+* comparar evolución como si siguiera siendo válida.
+
+Esto conserva trazabilidad sin falsear la serie histórica.
 
 ---
 
@@ -147,9 +162,11 @@ Si cambia la versión de:
 QUALITY_SCORE
 AUDIT_RULES
 perfil
+AUDIT_PROMPT
+AUDIT_FRAMEWORK
 ```
 
-debe registrarse.
+debe registrarse cuando corresponda.
 
 Ejemplo:
 
@@ -159,6 +176,18 @@ TEMPLATE 1.1
 ```
 
 Esto es esencial porque dos scores calculados con metodologías distintas pueden no ser perfectamente comparables.
+
+Si la metodología cambia entre auditorías, el historial debe permitir distinguir claramente:
+
+```text
+cambio real del proyecto
+```
+
+de:
+
+```text
+cambio del método de medición
+```
 
 ---
 
@@ -184,6 +213,13 @@ No interpretar automáticamente una diferencia de score como mejora o degradaci�
 
 Registrar ambos cuando difieran.
 
+Cuando existan criterios N/A debe conservarse también, al menos en el informe asociado:
+
+```text
+puntos aplicables
+score normalizado
+```
+
 Ejemplo:
 
 ```text
@@ -191,7 +227,7 @@ Score bruto: 94
 Score final: 79
 ```
 
-Esto permite observar que la calidad general era alta pero existía un CRITICAL que activó un gate.
+Esto permite observar que la calidad matemática era alta pero existía un CRITICAL que activó un gate.
 
 ---
 
@@ -206,7 +242,15 @@ MAJOR
 MINOR
 ```
 
-Las SUGGESTION no necesitan formar parte del score histórico principal.
+Las `SUGGESTION` no forman parte del score histórico principal porque:
+
+```text
+SUGGESTION = 0 puntos perdidos
+SUGGESTION = 0 Quality Gates
+SUGGESTION = no bloquea 100/100
+```
+
+Pueden conservarse únicamente como contexto opcional en el informe.
 
 ---
 
@@ -344,7 +388,7 @@ Cada fila debe apuntar preferentemente al informe correspondiente.
 Ejemplo:
 
 ```text
-../reports/AUDIT-2026-08-29-a12b34c.md
+../reports/AUDIT-2026-08-29-a12b34c-baseline.md
 ```
 
 El historial resume.
@@ -379,7 +423,15 @@ Puede utilizar:
 CONSENSUS
 ```
 
-como auditoría oficial después de resolver divergencias.
+como resultado oficial después de resolver divergencias.
+
+El informe de consenso debería seguir la convención:
+
+```text
+CONSENSUS-YYYY-MM-DD-<short-commit>-<slug>.md
+```
+
+No se deben promediar notas: las divergencias se resuelven criterio por criterio mediante evidencia.
 
 ---
 
@@ -425,7 +477,7 @@ No crear sistemas adicionales de métricas hasta que exista una necesidad demost
 
 # 26. Primera auditoría
 
-En la primera auditoría válida:
+En la primera auditoría completa, consistente y confiable:
 
 crear:
 
@@ -433,21 +485,29 @@ crear:
 .audit/history/SCORE_HISTORY.md
 ```
 
-y registrar la primera línea base.
+y registrar la primera línea base oficial.
 
-Ejemplo:
+Estado:
 
 ```text
 BASELINE
 ```
 
-Esta puntuación inicial será el punto de referencia para las mejoras siguientes.
+Si la primera auditoría es un piloto y revela defectos de la metodología:
+
+```text
+BASELINE PROVISIONAL
+```
+
+puede conservarse como registro histórico, pero no debe convertirse en línea base oficial.
+
+La baseline oficial será la primera auditoría posterior que utilice el framework corregido y pase todas las validaciones de consistencia.
 
 ---
 
 # 27. Baseline
 
-La primera auditoría completa y confiable debe considerarse:
+La primera auditoría completa, metodológicamente consistente y confiable debe considerarse:
 
 ```text
 BASELINE
@@ -465,6 +525,20 @@ No importa si obtiene:
 Su función es medir la realidad inicial.
 
 No debe manipularse para obtener una línea base favorable.
+
+Requisitos mínimos para una baseline oficial:
+
+```text
+[ ] commit/estado identificado
+[ ] framework y perfil identificados
+[ ] auditoría completa
+[ ] consistencia metodológica PASS
+[ ] camino a 100 matemáticamente consistente cuando score < 100
+[ ] informe y evidencia relacionados
+[ ] confianza suficiente para el alcance declarado
+```
+
+Una auditoría que falle estas condiciones debe permanecer como provisional, parcial o invalidada según corresponda.
 
 ---
 
@@ -487,6 +561,9 @@ representa una mejora mucho más defendible que observar únicamente:
 +8 puntos
 ```
 
+Las auditorías `PARCIAL`, `BASELINE PROVISIONAL`, `INCONSISTENTE` o `INVALIDADA`
+no deben utilizarse para calcular tendencia oficial como si fueran equivalentes a auditorías válidas.
+
 ---
 
 # 29. Comparación entre proyectos
@@ -494,15 +571,51 @@ representa una mejora mucho más defendible que observar únicamente:
 Los scores de distintos repositorios sólo son directamente comparables cuando utilizan:
 
 * misma versión de `QUALITY_SCORE`;
+* reglas de auditoría equivalentes;
 * perfiles equivalentes o conscientemente comparables;
-* niveles de evidencia razonablemente similares.
+* niveles de evidencia razonablemente similares;
+* estados metodológicos válidos.
 
 Evitar rankings simplistas entre tipos de proyecto diferentes.
 
 ---
 
-# 30. Regla final
+# 30. Estados recomendados del historial
+
+La columna `Estado` debe utilizar valores claros.
+
+Ejemplos:
+
+```text
+BASELINE
+REAUDITORÍA
+RELEASE
+CONSENSUS
+PILOTO
+BASELINE PROVISIONAL
+PARCIAL
+INCONSISTENTE
+INVALIDADA
+```
+
+Los estados oficiales comparables normalmente son:
+
+```text
+BASELINE
+REAUDITORÍA
+RELEASE
+CONSENSUS
+```
+
+Los demás conservan trazabilidad pero no deben mezclarse automáticamente en la tendencia oficial.
+
+---
+
+# 31. Regla final
 
 El historial debe permitir responder:
 
-> ¿El proyecto está objetivamente mejor que antes, qué cambió y mediante qué auditoría podemos demostrarlo?
+> ¿El proyecto está objetivamente mejor que antes, qué cambió y mediante qué auditoría válida podemos demostrarlo?
+
+El historial debe preservar tanto la evolución del proyecto como la evolución del método de medición,
+sin confundir una mejora real del repositorio con un cambio de rúbrica.

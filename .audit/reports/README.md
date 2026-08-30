@@ -1,6 +1,6 @@
 # Audit Reports
 
-**Versión:** 1.0
+**Versión:** 1.1
 **Estado:** Activo
 
 ---
@@ -36,7 +36,7 @@ AUDIT-YYYY-MM-DD-<short-commit>-<slug>.md
 Ejemplo:
 
 ```text
-AUDIT-2026-08-29-a12b34c.md
+AUDIT-2026-08-29-a12b34c-framework-auditoria.md
 ```
 
 Si no existe commit:
@@ -49,25 +49,31 @@ AUDIT-YYYY-MM-DD-WORKTREE.md
 
 # 3. Colisiones de nombre
 
-Si se realizan varias auditorías sobre el mismo commit y fecha:
+El `<slug>` debe utilizarse para distinguir auditorías con propósito diferente.
 
-utilizar un sufijo.
-
-Ejemplo:
+Ejemplos:
 
 ```text
-AUDIT-2026-08-29-a12b34c-01.md
-AUDIT-2026-08-29-a12b34c-02.md
+AUDIT-2026-08-29-a12b34c-baseline.md
+AUDIT-2026-08-29-a12b34c-seguridad.md
 ```
 
-Si son auditores distintos puede utilizarse:
+Si se realizan varias auditorías equivalentes sobre el mismo commit, fecha y propósito,
+puede añadirse un sufijo estable:
 
 ```text
-AUDIT-2026-08-29-a12b34c-CODEX.md
-AUDIT-2026-08-29-a12b34c-CLAUDE.md
+AUDIT-2026-08-29-a12b34c-baseline-01.md
+AUDIT-2026-08-29-a12b34c-baseline-02.md
 ```
 
-cuando sea útil para auditoría cruzada.
+Para auditorías cruzadas puede identificarse al auditor dentro del slug:
+
+```text
+AUDIT-2026-08-29-a12b34c-baseline-claude.md
+AUDIT-2026-08-29-a12b34c-baseline-codex.md
+```
+
+El nombre debe ser suficientemente descriptivo para identificar el informe sin abrirlo.
 
 ---
 
@@ -106,6 +112,7 @@ Versión de perfil:
 Auditor:
 Entorno:
 Confianza:
+Consistencia metodológica:
 ```
 
 Cuando un dato no pueda determinarse:
@@ -142,6 +149,14 @@ Q. CERTIFICACIÓN FINAL
 
 No deben omitirse silenciosamente secciones obligatorias.
 
+Si una sección no aplica, debe indicarse explícitamente:
+
+```text
+N/A
+```
+
+y justificarse cuando corresponda.
+
 ---
 
 # 7. Score
@@ -165,6 +180,17 @@ Score normalizado
 Cuando exista Quality Gate:
 
 indicar cuál.
+
+Toda pérdida de puntos debe ser trazable:
+
+```text
+CRITERIO
+→ HALLAZGO / CONDICIÓN
+→ EVIDENCIA
+→ PUNTOS PERDIDOS
+```
+
+Un informe no debe contener descuentos sin causa identificable.
 
 ---
 
@@ -208,14 +234,14 @@ Si se necesita trazabilidad longitudinal puede añadirse posteriormente un ident
 Los informes deben referenciar la carpeta correspondiente:
 
 ```text
-.audit/evidence/YYYY-MM-DD-<short-commit>/
+.audit/evidence/YYYY-MM-DD-<short-commit>-<slug>/
 ```
 
 Ejemplo:
 
 ```text
 Evidencia:
-../evidence/2026-08-29-a12b34c/tests.txt
+../evidence/2026-08-29-a12b34c-framework-auditoria/tests.txt
 ```
 
 No copiar dentro del informe salidas extensas sin necesidad.
@@ -233,7 +259,10 @@ Si se detecta un error material en el informe:
 preferir:
 
 * emitir una corrección explícita;
-* o ejecutar nueva auditoría.
+* marcarlo como provisional o invalidado cuando corresponda;
+* o ejecutar una nueva auditoría.
+
+Nunca debe reescribirse silenciosamente el resultado histórico.
 
 ---
 
@@ -264,7 +293,7 @@ Si una auditoría no pudo completarse:
 el nombre puede utilizar:
 
 ```text
-AUDIT-PARTIAL-YYYY-MM-DD-<commit>.md
+AUDIT-PARTIAL-YYYY-MM-DD-<short-commit>-<slug>.md
 ```
 
 y debe indicar claramente:
@@ -277,9 +306,19 @@ No debe confundirse con una auditoría completa.
 
 ---
 
-# 14. Auditoría invalidada
+# 14. Auditoría provisional, inconsistente o invalidada
 
-Si se descubre que la metodología utilizada era incorrecta o que se auditó el commit equivocado:
+Si una auditoría piloto revela ambigüedades o inconsistencias metodológicas puede marcarse:
+
+```text
+PILOTO
+BASELINE PROVISIONAL
+INCONSISTENTE — REQUIERE CORRECCIÓN
+```
+
+Su informe puede conservarse como evidencia histórica, pero no debe utilizarse como baseline oficial.
+
+Si se descubre que la metodología utilizada era incorrecta de forma material o que se auditó el commit equivocado:
 
 el informe debe marcarse:
 
@@ -287,9 +326,16 @@ el informe debe marcarse:
 INVALIDADO
 ```
 
-No eliminarlo silenciosamente si ya forma parte del historial relevante.
+No debe eliminarse silenciosamente si ya forma parte del historial relevante.
 
-Debe explicarse el motivo.
+Debe explicarse el motivo y, cuando corresponda:
+
+```text
+corregir framework
+→ versionar
+→ ejecutar nueva auditoría
+→ generar nuevo informe
+```
 
 ---
 
@@ -302,7 +348,7 @@ conservar todos los informes independientes.
 Posteriormente puede generarse:
 
 ```text
-CONSENSUS-YYYY-MM-DD-<commit>.md
+CONSENSUS-YYYY-MM-DD-<short-commit>-<slug>.md
 ```
 
 para resolver divergencias.
@@ -336,11 +382,11 @@ crear siempre un nuevo informe.
 Ejemplo:
 
 ```text
-AUDIT-2026-08-29-a12b34c.md → 83/100
+AUDIT-2026-08-29-a12b34c-baseline.md → 83/100
 
 correcciones
 
-AUDIT-2026-09-02-c45d67e.md → 96/100
+AUDIT-2026-09-02-c45d67e-reauditoria.md → 96/100
 ```
 
 Ambos deben conservarse.
@@ -358,19 +404,75 @@ Puntos recuperables
 Score esperado
 ```
 
-La suma debe ser consistente.
+La suma debe ser matemáticamente exacta.
+
+Antes de normalización debe cumplirse:
+
+```text
+puntos obtenidos
++
+puntos recuperables obligatorios
+=
+puntos aplicables
+```
+
+Si el resultado proyectado no alcanza exactamente 100/100 normalizado:
+
+```text
+CAMINO A 100 INCOMPLETO
+```
+
+y el informe debe corregirse antes de utilizarse como baseline oficial.
+
+No puede quedar ningún subcriterio parcialmente puntuado sin explicar cómo recupera sus puntos.
 
 ---
 
 # 19. Mejoras opcionales
 
-Las SUGGESTION deben quedar claramente separadas de los defectos puntuables.
+Las `SUGGESTION` deben quedar claramente separadas de los defectos puntuables.
 
-Nunca debe implicarse que son necesarias para obtener 100/100 si no restaron puntos.
+Regla obligatoria:
+
+```text
+SUGGESTION = 0 puntos perdidos
+SUGGESTION = 0 puntos recuperables obligatorios
+SUGGESTION = 0 Quality Gates
+SUGGESTION = no bloquea 100/100
+```
+
+Si una propuesta es necesaria para recuperar puntos o alcanzar 100/100, no puede clasificarse como `SUGGESTION`.
 
 ---
 
-# 20. Certificación interna del framework
+# 20. Consistencia metodológica
+
+Antes de aceptar un informe como resultado oficial debe verificarse:
+
+```text
+[ ] Toda pérdida de puntos tiene causa identificada
+[ ] Todo hallazgo puntuable está materialmente relacionado con su criterio
+[ ] Ninguna SUGGESTION resta puntos
+[ ] Ninguna SUGGESTION activa Quality Gates
+[ ] Ninguna SUGGESTION bloquea 100/100
+[ ] Todos los puntos perdidos aparecen en el camino obligatorio a 100
+[ ] El camino proyectado alcanza exactamente los puntos aplicables
+[ ] Todos los N/A están justificados
+[ ] Los Quality Gates derivan de hallazgos reales
+[ ] Informe y evidencia usan el mismo identificador base
+```
+
+Si alguna condición falla:
+
+```text
+INCONSISTENTE — REQUIERE CORRECCIÓN
+```
+
+El informe no debe utilizarse como baseline oficial hasta corregir la inconsistencia.
+
+---
+
+# 21. Certificación interna del framework
 
 La frase:
 
@@ -390,7 +492,7 @@ No representa una certificación oficial externa.
 
 ---
 
-# 21. Resumen ejecutivo
+# 22. Resumen ejecutivo
 
 El resumen ejecutivo debe ser breve y útil.
 
@@ -407,7 +509,7 @@ El detalle técnico pertenece a las secciones posteriores.
 
 ---
 
-# 22. Objetividad
+# 23. Objetividad
 
 Los informes deben evitar expresiones vagas como:
 
@@ -429,7 +531,7 @@ Tests oficiales ejecutados:
 
 ---
 
-# 23. No ocultar incertidumbre
+# 24. No ocultar incertidumbre
 
 Debe mostrarse explícitamente:
 
@@ -443,9 +545,11 @@ cuando corresponda.
 
 Un informe profesional no necesita aparentar certeza absoluta.
 
+La incertidumbre relevante debe reflejarse también en el nivel de confianza y, cuando corresponda, en la puntuación.
+
 ---
 
-# 24. Referencias a archivos
+# 25. Referencias a archivos
 
 Cuando sea posible utilizar rutas concretas.
 
@@ -461,8 +565,18 @@ Esto facilita reproducibilidad.
 
 ---
 
-# 25. Regla final
+# 26. Regla final
 
 Un informe debe permitir a una persona que no participó en la auditoría comprender:
 
 > por qué el proyecto obtuvo exactamente esa puntuación y qué evidencia sostiene cada desviación relevante.
+
+Además, debe poder determinarse sin ambigüedad:
+
+```text
+qué estado del repositorio fue auditado
+qué versión del framework se utilizó
+qué perfil estuvo activo
+qué evidencia corresponde al informe
+si el resultado es oficial, provisional, parcial o invalidado
+```
