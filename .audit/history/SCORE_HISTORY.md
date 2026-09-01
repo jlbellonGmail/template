@@ -5,6 +5,7 @@
 | 2026-08-29 | 05ce680 | - | TEMPLATE 1.0 | 1.0 | BASELINE PROVISIONAL | 80.87 | 79.00 | ALTA | 0 | 1 | 2 | 4 | ../reports/AUDIT-2026-08-29-05ce680-baseline-provisional.md |
 | 2026-08-30 | 34773af | - | TEMPLATE 1.1 | 1.1 | BASELINE | 92.75 | 79.00 | ALTA | 0 | 1 | 2 | 2 | ../reports/AUDIT-2026-08-30-34773af-baseline-v1-1.md |
 | 2026-08-31 | 7964013 | - | TEMPLATE 1.1 | 1.1 | REAUDITORÍA PROVISIONAL — REQUIERE REVISIÓN | 95.50 | 95.50 | ALTA | 0 | 0 | 2 | 0 | ../reports/AUDIT-2026-08-31-7964013-reauditoria-v1-1.md |
+| 2026-08-31 | 24789d6 | audit-framework-v1.1.0 (no es release del producto) | TEMPLATE 1.1 | 1.1 | REAUDITORÍA FINAL POST-REMEDIACIÓN | 97.50 | 97.50 | ALTA | 0 | 0 | 1 | 3 | ../reports/AUDIT-2026-08-31-24789d6-reauditoria-final-v1-1.md |
 
 ## Estado de esta auditoría
 
@@ -105,6 +106,68 @@ permanece intacta. Ver la nota completa al inicio de
 baseline oficial** hasta que la revisión dedicada de F-001/F-002 se
 complete y, si corresponde, se registre como una nueva entrada en esta
 tabla (no como una edición retroactiva de la fila `7964013`).
+
+## Reauditoría final independiente post-remediación (2026-08-31, commit `24789d6`)
+
+Reauditoría ejecutada de forma completamente independiente (sin usar
+scores, severidades, hallazgos ni caminos a 100 de ninguna auditoría
+anterior como entrada) sobre el commit `24789d6` (punta de
+`origin/develop` en el momento de la auditoría, posterior a `7964013` y
+a `da1f60d` "Documentar ciclo de vida de main y releases"). La
+comparación histórica se realizó únicamente después de consolidar el
+resultado propio, siguiendo `AUDIT_RULES.md` §67-69.
+
+Resultado: **97.50/100, APTO CON CORRECCIONES, sin Quality Gate
+activo.** Se identificaron 5 hallazgos nuevos no reportados en ninguna
+auditoría anterior (F-001 a F-005 de
+`../reports/AUDIT-2026-08-31-24789d6-reauditoria-final-v1-1.md`): uno
+MAJOR puntuable (falso positivo de `sync-agentic-adapters.ps1 -Check`
+bajo PowerShell Desktop, la edición que `AGENTS.md` declara requerida),
+tres MINOR puntuables (suite de tests del reconciliador local sin
+entorno de verificación ejecutable disponible; contradicción textual
+entre "no hay ningún tag" de `AGENTS.md` y el tag `audit-framework-v1.1.0`
+ya existente; conteo de scripts desactualizado en `README.md`), y uno
+adicional clasificado `SUGGESTION` no puntuable (observabilidad
+incompleta del guard de `develop` ante fallo de la API de GitHub durante
+la detección — el guard ya falla de forma segura y visible en ese caso,
+sin aparentar éxito; ver ADENDA de corrección abajo). Ninguno de estos 5
+hallazgos coincide con los F-001/F-002 de la reauditoría marcada
+"PROVISIONAL — REQUIERE REVISIÓN" sobre `7964013` (esos dos ya no están
+presentes en el estado observado en `24789d6`: `main` sigue sin existir,
+pero ya no se penaliza porque el estado se evaluó, en esta auditoría,
+correctamente como prospectivo —consistente con `AUDIT_RULES.md`
+§45— no como capacidad actual incumplida).
+
+Se aplicó la segunda pasada obligatoria de refutación *conceptualmente*
+(búsqueda dirigida de residuos, contradicciones, tests cosméticos,
+configuración no verificada asumida como verificada, dependencias
+ocultas) aunque no correspondía formalmente, dado que el resultado
+provisional (97.50) nunca llegó a 100/100.
+
+### Corrección post-emisión (mismo commit `24789d6`)
+
+El informe fue revisado tras su emisión inicial: el hallazgo que
+originalmente se registró como F-002 (MAJOR, -0.50 en Q8.3) se
+reclasificó a `SUGGESTION` (0 puntos perdidos) porque la propia
+evidencia ya reunida (log del incidente histórico real) muestra que el
+guard de `develop`, ante el fallo de la API de GitHub durante la
+detección, termina el paso y el job en rojo (`exit code 1`,
+`conclusion: failure`) — es decir, nunca aparenta éxito, que es
+exactamente lo que exige `QUALITY_SCORE.md` Q8.3. Lo que faltaba (un
+estado explícito de "verificación inconclusa" y un incidente auditable
+dedicado a ese caso) es una mejora de observabilidad sobre un control
+que ya falla de forma segura, no un incumplimiento de Q8.3. Q8.3 pasó de
+MENOR (1.50/2.00) a COMPLETO (2.00/2.00). F-003 se mantuvo como MINOR
+puntuable (-1.00 en Q5.3), endureciendo su cierre: una nota de
+verificación manual sin ejecución asociada ya no se acepta como
+suficiente para recuperar esos puntos; se exige evidencia ejecutable
+real (preferentemente un job `windows-latest`). Score bruto corregido:
+**97.50/100** (antes 97.00). Score final: **97.50/100** (sin cambio de
+Quality Gate). Puntos recuperables obligatorios: **2.50** (antes 3.00).
+`97.50 + 2.50 = 100.00`, cierra exactamente. Ver la ADENDA de corrección
+metodológica al inicio de
+`../reports/AUDIT-2026-08-31-24789d6-reauditoria-final-v1-1.md` para el
+detalle completo.
 
 ## Convenciones
 
