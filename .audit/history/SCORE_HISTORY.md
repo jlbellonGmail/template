@@ -6,6 +6,7 @@
 | 2026-08-30 | 34773af | - | TEMPLATE 1.1 | 1.1 | BASELINE | 92.75 | 79.00 | ALTA | 0 | 1 | 2 | 2 | ../reports/AUDIT-2026-08-30-34773af-baseline-v1-1.md |
 | 2026-08-31 | 7964013 | - | TEMPLATE 1.1 | 1.1 | REAUDITORÍA PROVISIONAL — REQUIERE REVISIÓN | 95.50 | 95.50 | ALTA | 0 | 0 | 2 | 0 | ../reports/AUDIT-2026-08-31-7964013-reauditoria-v1-1.md |
 | 2026-08-31 | 24789d6 | audit-framework-v1.1.0 (no es release del producto) | TEMPLATE 1.1 | 1.1 | REAUDITORÍA FINAL POST-REMEDIACIÓN | 97.50 | 97.50 | ALTA | 0 | 0 | 1 | 3 | ../reports/AUDIT-2026-08-31-24789d6-reauditoria-final-v1-1.md |
+| 2026-09-09 | 9e18063 | audit-framework-v1.1.0 (no es release del producto) | TEMPLATE 1.1 | 1.1 | REAUDITORÍA FINAL — 100/100 DEFINITIVO | 100.00 | 100.00 | ALTA | 0 | 0 | 0 | 0 | ../reports/AUDIT-2026-09-09-9e18063-final-100.md |
 
 ## Estado de esta auditoría
 
@@ -168,6 +169,41 @@ Quality Gate). Puntos recuperables obligatorios: **2.50** (antes 3.00).
 metodológica al inicio de
 `../reports/AUDIT-2026-08-31-24789d6-reauditoria-final-v1-1.md` para el
 detalle completo.
+
+## Auditoría final independiente 100/100 DEFINITIVO (2026-09-09, commit `9e18063`)
+
+Auditoría ejecutada de forma completamente independiente (sin usar
+scores, severidades, hallazgos ni caminos a 100 de ninguna auditoría
+anterior —incluidas `AUDIT-2026-09-03-62433d1-auditoria-final-independiente.md`
+y `AUDIT-2026-09-09-62433d1-revision-adversarial.md`— como entrada,
+únicamente como mapa de temas a reverificar) sobre el commit `9e18063`
+(punta de `develop` en el momento de la auditoría, introducido por
+PR#23). Se reevaluó todo el proyecto desde cero con evidencia fresca:
+código, documentación, tests, CI, workflows, Git/GitHub y
+reproducibilidad.
+
+Resultado: **100.00/100, sin Quality Gate activo.** Los tres hallazgos
+heredados como temas a reverificar (F-001, F-004, F-005) se confirmaron
+cerrados con evidencia directa y fresca sobre el propio commit y la
+propia PR que lo introdujo — ver
+`../reports/AUDIT-2026-09-09-9e18063-final-100.md`, sección H.
+
+Se identificó un elemento `NO VERIFICADO — LIMITACIÓN DEL ENTORNO`
+(NV-01: flakiness no determinista de la suite `pytest` completa en el
+entorno Windows local del auditor, con causa raíz distinta al contenido
+del commit y sin correlato en el CI oficial), sin efecto en el score, y
+dos `SUGGESTION` (ausencia de bloque `permissions:` explícito en
+`ci.yml`; Actions pinneadas por tag en vez de por SHA), ambas sin pérdida
+de puntos conforme a `reports/README.md` §19.
+
+Al obtener un resultado provisional de 100/100, se ejecutó la segunda
+pasada adversarial obligatoria exigida por `AUDIT_RULES.md` §94,
+documentada en `../reports/AUDIT-2026-09-09-9e18063-segunda-pasada-adversarial.md`.
+Esa segunda pasada buscó activamente refutar el resultado en 5 frentes
+(NV-01/G3, coherencia documental, reapertura de F-001/F-004/F-005,
+reclasificación de las dos `SUGGESTION`, e integridad matemática del
+recálculo Q1–Q8) y no logró refutarlo. El score se certifica como
+**100/100 DEFINITIVO**.
 
 ## Convenciones
 
