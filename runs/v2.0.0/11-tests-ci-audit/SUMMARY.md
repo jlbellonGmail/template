@@ -1,6 +1,6 @@
 # F06 — Tests, CI y `.audit`
 
-Estado: listo para PR · Versión: v2.0.0 · Tipo: Feature  
+Estado: listo para PR · Versión: v2.0.0 · Tipo: Feature
 PR: pendiente · Merge: pendiente
 
 ## Objetivo
