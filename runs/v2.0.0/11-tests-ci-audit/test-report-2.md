@@ -8,7 +8,9 @@ feedback:
 
 ## Evidencia
 
-- `pytest -q tests/test_local_reconciler_scripts.py`: 8 passed.
+- `pytest -q tests/test_local_reconciler_scripts.py`: 7 passed; se eliminó un
+  escenario duplicado de arranque en checkout principal, ya cubierto por el
+  arranque desde worktree y lock stale.
 - `pytest -q tests/test_audit_framework.py tests/test_ci_workflow.py tests/test_adaptive_evidence.py tests/test_convergence.py`: 23 passed.
 - `sync-agentic-adapters.ps1 -Check`: aprobado.
 - Contrato de la feature: aprobado.
