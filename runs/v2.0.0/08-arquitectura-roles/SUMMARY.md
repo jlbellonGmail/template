@@ -1,10 +1,10 @@
 # F03 — Arquitectura de roles por capacidades
 
-Estado: lista para PR  
+Estado: mergeada y cerrada  
 Versión: v2.0.0  
 Tipo: Feature  
-PR: pendiente  
-Merge: pendiente
+PR: #34  
+Merge: 9a734f1
 
 ## Objetivo
 Reducir roles conceptuales y desacoplarlos de modelos/proveedores.
