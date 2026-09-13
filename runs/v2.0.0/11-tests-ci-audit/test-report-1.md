@@ -11,7 +11,7 @@ feedback:
 - `pytest -q tests/test_audit_framework.py`: aprobado.
 - Suite focalizada de circuito: aprobada salvo los tres escenarios de proceso
   persistente del reconciliador en el host local.
-- `pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/sync-agentic-adapters.ps1 -Check`: pendiente de ejecución final.
+- `pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/sync-agentic-adapters.ps1 -Check`: aprobado.
 
-Los fallos locales no se ocultan: están explicados por el árbol de procesos
-del entorno de ejecución, no por `git fetch`, estado remoto o lógica de cierre.
+La corrección posterior separa explícitamente launcher y lifecycle; la suite
+focalizada final pasa 8/8.

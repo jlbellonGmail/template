@@ -1,6 +1,6 @@
 # F06 — Tests, CI y `.audit`
 
-Estado: en ejecución · Versión: v2.0.0 · Tipo: Feature  
+Estado: listo para PR · Versión: v2.0.0 · Tipo: Feature  
 PR: pendiente · Merge: pendiente
 
 ## Objetivo
@@ -23,10 +23,10 @@ product y reconciliación como responsabilidades separadas.
 
 ## Validación
 
-La validación final se completará con pytest, adaptadores, contrato, CI remoto
-y reconciliación post-merge. Los tres timeouts locales históricos se
-reproducen sólo cuando el host de la herramienta mata descendientes; el job
-Windows de CI es el verificador determinístico.
+La suite focalizada, el contrato y los adaptadores pasan. Los tres timeouts
+históricos se eliminaron separando el test del launcher del motor de lifecycle:
+el job Windows mantiene ambos gates, pero los escenarios de cierre se ejecutan
+en foreground para no depender del árbol de procesos del host.
 
 ## Decisiones
 
