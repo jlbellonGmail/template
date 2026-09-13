@@ -1,11 +1,11 @@
 # 10-evidencias-adaptativas
 
-Estado: en validación final
+Estado: mergeada y cerrada
 Versión: v2.0.0
 Tipo: Feature
 SDD: FULL
-PR: pendiente
-Merge: pendiente
+PR: #42
+Merge: sí
 
 ## Objetivo
 Hacer proporcional la evidencia al nivel SDD, manteniendo SUMMARY como entrada humana.
@@ -32,3 +32,4 @@ Ninguna funcional. F06 queda fuera de alcance.
 
 ## Paralelización futura
 F06 debe seguir secuencialmente para revisar tests, CI y `.audit`. No se inicia ninguna fase aquí.
+
