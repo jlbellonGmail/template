@@ -1,6 +1,11 @@
 # T04 — Integridad de sincronización y cierre transversal
 
-Estado: READY_FOR_PR · Versión: v2.0.0 · Tipo: Maintenance / Transversal · SDD: STANDARD · PR: pendiente · Merge: pendiente
+Estado: DONE
+Versión: v2.0.0
+Tipo: Maintenance / Transversal
+SDD: STANDARD
+PR: #72
+Merge: e785cec9
 
 ## Objetivo
 
@@ -33,6 +38,12 @@ implementan F13, F14, F15, F16 o F17.
 
 Los locks de CWD/handles Windows pueden dejar una carpeta física vacía; se
 reportan sin borrar contenido. Una carpeta con archivos bloquea el cierre.
+Quedan como inputs para F14: slug maintenance derivado incorrectamente,
+commit directo de STATUS durante cierre, residuos físicos Windows y posible
+bloqueo del check-integrity local. Además, el gate requiere GitHub Review
+independiente incluso en repositorio single-maintainer; F14 debe formalizar
+una alternativa segura basada en autorización scoped + review independiente de
+agente + CI.
 
 ## Detalle
 
