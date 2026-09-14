@@ -1,11 +1,11 @@
 # F09 — Skills reutilizables
 
-Estado: en revisión
+Estado: DONE
 Versión: v2.0.0
 Tipo: Feature
 SDD: LIGHT
-PR: pendiente
-Merge: pendiente
+PR: #53
+Merge: 42521fb
 
 ## Objetivo
 
@@ -49,3 +49,5 @@ Ninguna. F10 no se implementa ni se inicia.
 ## Detalle
 
 [evidencia SDD](sdd.json) · [revisión](code-review-1.md)
+La CI vigente de la PR y de `develop` quedó verde en los tres gates; el
+reintento del timeout ambiental del reconciliador también pasó.
