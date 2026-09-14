@@ -40,7 +40,10 @@ Los locks de CWD/handles Windows pueden dejar una carpeta física vacía; se
 reportan sin borrar contenido. Una carpeta con archivos bloquea el cierre.
 Quedan como inputs para F14: slug maintenance derivado incorrectamente,
 commit directo de STATUS durante cierre, residuos físicos Windows y posible
-bloqueo del check-integrity local.
+bloqueo del check-integrity local. Además, el gate requiere GitHub Review
+independiente incluso en repositorio single-maintainer; F14 debe formalizar
+una alternativa segura basada en autorización scoped + review independiente de
+agente + CI.
 
 ## Detalle
 
