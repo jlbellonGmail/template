@@ -1,6 +1,9 @@
 # QA 1 — approved
 
-verdict: approved
+```yaml
+status: approved
+attempt: 1
+```
 
 - `pytest -q`: 236 passed.
 - `pytest -q tests/test_supply_chain_policy.py`: passed.
