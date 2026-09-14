@@ -2,10 +2,11 @@
 
 ```yaml
 status: approved
-attempt: 1
+attempt: 2
 ```
 
-- `pytest -q`: 236 passed.
+- `pytest -q`: 236 passed local; PR #67 circuit-tests exposed and reproduced a PowerShell parser defect in the new negative-path diagnostic.
+- Corrección aplicada: delimitación `${fileName}` antes de `:`; la suite focalizada se repite antes de republicar.
 - `pytest -q tests/test_supply_chain_policy.py`: passed.
 - `validate-supply-chain.ps1`: passed.
 - `git diff --check`: passed.
