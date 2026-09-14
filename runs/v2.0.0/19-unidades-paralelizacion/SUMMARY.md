@@ -4,8 +4,8 @@ Estado: DONE
 Versión: v2.0.0
 Tipo: Feature
 SDD: FULL
-PR: #83
-Merge: 11bd18e316ba0d06e74d5c9418cdaba891254178
+PR: pendiente de creación
+Merge: pendiente
 
 ## Objetivo
 
@@ -38,7 +38,7 @@ scheduler, daemon Windows, Sysinternals obligatorio ni heurística ours/theirs.
 
 ## Incidencias
 
-CI: verde en PR #83 (circuit-tests, local-reconciler-tests, product-tests).
+La CI y el número de PR se completarán durante el cierre E2E.
 
 ## Detalle
 
