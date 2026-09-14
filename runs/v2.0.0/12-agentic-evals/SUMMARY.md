@@ -4,7 +4,7 @@ Estado: en validacion
 Versión: v2.0.0
 Tipo: Feature
 SDD: FULL
-PR: pendiente
+PR: #52
 Merge: pendiente
 
 ## Objetivo
