@@ -1,6 +1,6 @@
 # F12 — Supply chain y CI/CD profesional
 
-Estado: implementación en validación  
+Estado: reconciliado y en validación  
 Versión: v2.0.0 · Tipo: Feature · Unidad: 17-supply-chain-cicd
 
 ## Resultado
