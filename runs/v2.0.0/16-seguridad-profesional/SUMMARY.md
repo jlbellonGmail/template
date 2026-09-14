@@ -1,6 +1,6 @@
 # F11 — Seguridad profesional
 
-Estado: READY_FOR_PR · Versión: v2.0.0 · Tipo: Feature · SDD: FULL · PR: pendiente · Merge: pendiente
+Estado: READY_FOR_PR · Versión: v2.0.0 · Tipo: Feature · SDD: FULL · PR: #54 · Merge: pendiente
 
 ## Objetivo
 
@@ -21,7 +21,8 @@ CI con mínimo privilegio y marco consumible por F10.
 
 ## Validación
 
-232 tests verdes; contrato, adaptadores y checks focalizados aprobados.
+236 tests verdes en el HEAD reconciliado; contrato, adaptadores y checks
+focalizados aprobados.
 
 ## Decisiones
 
@@ -33,4 +34,4 @@ Advertencia XML ambiental de PowerShell sin impacto en tests ni secretos.
 
 ## Detalle
 
-[spec](spec.md) · [plan](plan.md) · [tasks](tasks.md) · [audit](audit-1.md) · [QA](test-report-1.md) · [code review](code-review-1.md) · [decision](decision.md)
+[spec](spec.md) · [plan](plan.md) · [tasks](tasks.md) · [audit](audit-1.md) · [QA](test-report-2.md) · [code review](code-review-2.md) · [decision](decision.md)
