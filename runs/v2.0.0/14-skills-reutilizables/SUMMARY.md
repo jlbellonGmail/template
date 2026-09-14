@@ -1,7 +1,11 @@
 # F09 — Skills reutilizables
 
-Estado: en revisión · Versión: v2.0.0 · Tipo: Feature · SDD: LIGHT  
-PR: pendiente · Merge: pendiente
+Estado: en revisión
+Versión: v2.0.0
+Tipo: Feature
+SDD: LIGHT
+PR: pendiente
+Merge: pendiente
 
 ## Objetivo
 
