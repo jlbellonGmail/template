@@ -1,10 +1,10 @@
 # T01 — Normalización documental transversal
 
-Estado: terminada  
-Versión: v2.0.0  
-Tipo: Maintenance / Transversal  
-PR: [v2.0.0][T01] Normalización documental transversal  
-Merge: pendiente
+Estado: DONE
+Versión: v2.0.0
+Tipo: Maintenance / Transversal
+PR: #33 — [v2.0.0][T01] Normalización documental transversal
+Merge: 038d61b
 
 ## Objetivo
 
