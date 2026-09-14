@@ -17,3 +17,12 @@ attempt: 2
 ```
 
 Se verificó la corrección del conflicto de resolución `Git`/`git` en PowerShell Linux y la ausencia de cambios fuera de F13.
+
+## Revisión 3 — reconciliación F15
+
+```yaml
+status: approved
+attempt: 3
+```
+
+Se revisó el diff posterior al merge: los artefactos de F15 permanecen completos, el fix Linux se conserva y no se introdujo lógica de F14 ni se alteró `check-integrity.ps1`.
