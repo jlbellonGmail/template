@@ -2,7 +2,8 @@
 
 status: approved
 scope: 19-unidades-paralelizacion
-base: 62d67f3873c364c8de85d3ad5020ec91bfac5adb
+base: develop
+baseCommit: 62d67f3873c364c8de85d3ad5020ec91bfac5adb
 head: HEAD
 
 La revisión de agente independiente cubre lifecycle, reconciliación,
