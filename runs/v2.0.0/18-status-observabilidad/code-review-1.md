@@ -26,3 +26,13 @@ attempt: 3
 ```
 
 Se revisó el diff posterior al merge: los artefactos de F15 permanecen completos, el fix Linux se conserva y no se introdujo lógica de F14 ni se alteró `check-integrity.ps1`.
+
+## Revisión 4
+
+```yaml
+status: approved
+attempt: 4
+```
+
+La whitelist de fase 13 es el cambio mínimo necesario para consumir la
+autorización scoped existente; no habilita auto-aprobación GitHub.

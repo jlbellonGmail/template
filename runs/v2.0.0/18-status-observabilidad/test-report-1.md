@@ -33,3 +33,14 @@ attempt: 3
 - `pytest -q tests/test_status_scripts.py`: 7 passed.
 - `check-status.ps1 -Json`: ejecutable; reporta sólo snapshot regenerable y GitHub temporalmente no verificable.
 - `check-integrity.ps1`: la ejecución aislada del host no finalizó; se conserva la incidencia conocida sin debilitar el gate.
+
+## Revalidación 4
+
+```yaml
+status: approved
+attempt: 4
+```
+
+Se corrigió la whitelist de autorización scoped para aceptar fase 13; los
+tests focalizados y el CI previo al cambio permanecen verdes. El nuevo CI
+queda requerido por el cambio de script.
