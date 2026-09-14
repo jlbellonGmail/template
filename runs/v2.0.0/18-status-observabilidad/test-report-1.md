@@ -2,6 +2,11 @@
 
 Verdict: approved
 
+```yaml
+status: approved
+attempt: 1
+```
+
 - `pytest -q tests/test_status_scripts.py`: PASS (7 tests).
 - Se verificó salida JSON de `update-status.ps1 -Json` sin escritura implícita.
 - Se verificó `check-status.ps1 -Json` y clasificación de snapshot stale.
