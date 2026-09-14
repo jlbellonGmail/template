@@ -2,6 +2,7 @@
 
 ```yaml
 status: approved
+attempt: 1
 reviewer: Reviewer independiente
 scope: diff final de la unidad y evidencia adaptativa LIGHT
 ```
