@@ -10,7 +10,7 @@ base: develop
 version: v2.0.0
 unit: 22-auditoria-release-v2
 pr: 90
-head: 1bbea0fcc2732adcc2f385b8a00766d6fb83dd79
+head: HEAD
 
 Autorización scoped únicamente a F17 y a la publicación de v2.0.0 cuando todos
 los gates del repositorio estén verdes.
