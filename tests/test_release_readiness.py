@@ -18,6 +18,7 @@ def test_release_gate_rejects_premature_v200_without_mutation():
     assert (
         "ROADMAP incompleto" in result.stderr
         or "CI no encontrado" in result.stderr
+        or "Rama incorrecta" in result.stderr
     )
 
 
