@@ -2,8 +2,8 @@
 
 Estado: APPROVED
 Versión: v2.0.4
-PR: pendiente de merge de la unidad de mantenimiento
-Merge: pendiente
+PR: #115
+Merge: 91f8b55
 
 La unidad corrige el techo rígido de recolección de tests y la detección de
 GitHub autenticado en STATUS. La validación conserva la semántica única,
