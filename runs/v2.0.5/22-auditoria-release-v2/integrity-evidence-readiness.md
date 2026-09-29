@@ -1,6 +1,7 @@
 PASS check-integrity.ps1 -Version v2.0.5
-HEAD: dcbcfdfb0cb2efe994d0de71160073473fed04c5
+HEAD: 5cd517576843612a45129309a0208c88504b306f
 PR: #118
 
-Resultado global: PASS. El snapshot de STATUS contiene warnings regenerables
-de PR/CI porque el commit STATUS-only precede al HEAD actual.
+Resultado global: PASS. El snapshot de STATUS contiene un warning regenerable:
+HEAD `14e05fb` frente al árbol actual; no hay inconsistencias de ROADMAP,
+runs, Git o STATUS.
