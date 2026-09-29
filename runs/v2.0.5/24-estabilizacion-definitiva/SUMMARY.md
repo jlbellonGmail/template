@@ -29,6 +29,7 @@ Implementado localmente y validado con suite completa. Pendiente PR, CI remoto, 
 - Upgrade: 4 passed.
 - Suite completa: 281 passed en segunda corrida.
 - Suite final post-evidencia: 280 passed + 1 fallo transitorio de permisos Git; test exacto reintentado y aprobado.
+- Suite final post-follow-up: 282 passed.
 - `check-status.ps1`: PASS.
 - `check-integrity.ps1 -Version v2.0.5`: PASS.
 
@@ -38,7 +39,7 @@ El upgrade copia únicamente `sharedPaths`; los consumidores anteriores sin `tem
 
 ## Incidencias
 
-Dos corridas completas tuvieron un fallo transitorio de permisos Git en `%TEMP%` al pushear a bare repos temporales; ambos tests exactos pasaron al reintentar. La segunda suite completa pasó completa antes de agregar evidencia.
+Dos corridas completas tuvieron un fallo transitorio de permisos Git en `%TEMP%` al pushear a bare repos temporales; ambos tests exactos pasaron al reintentar. La corrida final posterior al follow-up pasó completa.
 
 ## Detalle
 

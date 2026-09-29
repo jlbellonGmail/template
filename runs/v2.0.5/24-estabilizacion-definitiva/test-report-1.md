@@ -16,9 +16,10 @@ feedback: []
 - `pytest -q`: segunda corrida completa 281 passed.
 - `pytest -q`: corrida final post-evidencia 280 passed y 1 fallo transitorio de permisos Git en `%TEMP%`.
 - `pytest -q tests/test_milestone_ready_for_pr.py::test_milestone_pr_body_lists_every_item`: 1 passed al reintentar el fallo transitorio final.
+- `pytest -q`: corrida final post-follow-up 282 passed.
 - `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-status.ps1`: PASS.
 - `pwsh -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-integrity.ps1 -Version v2.0.5`: PASS.
 
 ## Resultado
 
-Aprobado. Los fallos observados fueron externos al cambio y quedaron reintentados en los tests exactos; la suite completa cerró verde antes de agregar evidencia, y la corrida final post-evidencia sólo repitió el patrón transitorio de permisos en repos Git temporales.
+Aprobado. Los fallos observados fueron externos al cambio y quedaron reintentados en los tests exactos. La corrida final posterior al follow-up cerró completamente verde con 282 tests.
