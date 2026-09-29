@@ -11,5 +11,6 @@ feedback: []
 - Regresión del guard: 19 passed tras corregir el fallback `gh api`/`jq`.
 - El job de guard previo falló por la sintaxis CLI inválida; el paso falló
   antes de marcar una violación y no revirtió el commit.
-- PR #118, HEAD `dcbcfdfb0cb2efe994d0de71160073473fed04c5`: `circuit-tests`,
+- PR #118, HEAD `74e9973c43eafcd047faea216eb1d8dc1c8a5b52`: `circuit-tests`,
   `product-tests` y `local-reconciler-tests` PASS.
+- Gate post-HITL y guard post-merge de PR #118: PASS.
