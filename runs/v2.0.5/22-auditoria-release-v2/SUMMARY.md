@@ -3,7 +3,7 @@
 Estado: READY_FOR_PR
 Versión: v2.0.5
 Base: develop
-PR: PENDING
+PR: #118
 Merge: PENDING
 
 ## Alcance
