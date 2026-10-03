@@ -371,10 +371,10 @@ if ($pr.headRefName -ne $Branch) {
 # commit head vigente, que se consulta en vivo con 'gh pr view'.
 if ($PreAuthorizedHumanMerge -or -not [string]::IsNullOrWhiteSpace($AuthorizationPath) -or
     -not [string]::IsNullOrWhiteSpace($IndependentReviewPath) -or -not [string]::IsNullOrWhiteSpace($IntegrityEvidencePath)) {
-    throw "La autorizacion previa por archivo (-PreAuthorizedHumanMerge/-AuthorizationPath/-IndependentReviewPath/-IntegrityEvidencePath) fue invalidada en v2.0.6 (B02/B04): la aprobacion debe ser una review APPROVED de GitHub sobre el commit head vigente."
+    throw "invalidada en v2.0.6 (B02/B04): la autorizacion previa por archivo (-PreAuthorizedHumanMerge/-AuthorizationPath/-IndependentReviewPath/-IntegrityEvidencePath) no aprueba nada; se requiere una review APPROVED de GitHub sobre el commit head vigente."
 }
 if ($GovernanceMode -eq "SingleMaintainer") {
-    throw "SingleMaintainer dependia de autorizacion por archivo, invalidada en v2.0.6. Un unico maintainer no puede aprobar su propia PR en GitHub: el merge lo ejecuta la cuenta humana manualmente sobre el SHA verificado."
+    throw "invalidada en v2.0.6 (B02/B04): SingleMaintainer dependia de autorizacion por archivo; no se fabrica self-review. Un unico maintainer no puede aprobar su propia PR en GitHub: el merge lo ejecuta la cuenta humana manualmente sobre el SHA verificado."
 }
 $preauthorized = $false
 Write-Host "==> governance_mode: multi-maintainer; approval_basis: GitHub human review + CI + integrity"
