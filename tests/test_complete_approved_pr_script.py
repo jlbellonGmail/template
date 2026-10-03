@@ -190,15 +190,31 @@ def test_complete_approved_pr_requires_hitl_approval_before_checks(tmp_path: Pat
     assert reports(repo) == []
 
 
-def test_complete_approved_pr_accepts_explicit_scoped_preauthorization(tmp_path: Path):
+def test_complete_approved_pr_rejects_file_based_preauthorization(tmp_path: Path):
+    """v2.0.6 (B02/B04): una autorizacion escrita en archivos de la PR ya no aprueba nada."""
     repo, bin_dir, log_path = make_repo(tmp_path)
 
     result = run_gate(repo, bin_dir, log_path, "review_required", preauthorized=True)
 
-    assert result.returncode == 0, result.stderr + result.stdout
-    log = log_path.read_text(encoding="utf-8")
-    assert "pr merge 123 --merge --delete-branch" in log
-    assert "pr checks" in log
+    assert result.returncode != 0
+    assert "invalidada en v2.0.6" in result.stderr + result.stdout
+    log = log_path.read_text(encoding="utf-8") if log_path.exists() else ""
+    assert "pr merge" not in log
+
+
+def test_complete_approved_pr_rejects_single_maintainer_mode(tmp_path: Path):
+    repo, bin_dir, log_path = make_repo(tmp_path)
+    for flag in (["-GovernanceMode", "SingleMaintainer"],):
+        result = subprocess.run(
+            [powershell(), "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(SCRIPT), "-Slug", SLUG,
+             "-Branch", BRANCH, "-PrNumber", "123", "-SkipLocalCleanup"] + flag,
+            cwd=repo, env=command_env(bin_dir, "success", log_path), text=True, capture_output=True,
+            check=False, creationflags=CREATE_NO_WINDOW,
+        )
+        assert result.returncode != 0
+        assert "invalidada en v2.0.6" in result.stderr + result.stdout
+    log = log_path.read_text(encoding="utf-8") if log_path.exists() else ""
+    assert "pr merge" not in log
 
 
 def test_complete_approved_pr_blocks_wrong_base_branch(tmp_path: Path):
@@ -278,3 +294,37 @@ def test_complete_approved_pr_is_rerunnable_after_checks_turn_green(tmp_path: Pa
     assert "pr view" in second_log
     assert len(reports(repo)) == 2
     assert reports(repo)[-1].read_text(encoding="utf-8").startswith("status: approved")
+
+
+def test_every_committed_human_authorization_is_inert(tmp_path: Path):
+    """v2.0.6 (B02/B04): las autorizaciones reutilizables ya commiteadas en runs/ no aprueban nada.
+
+    Se prueba con la autorizacion real '22-auditoria-release-v2', la que el plan identifica como
+    reutilizable desde una PR, y con cada otra human-authorization.md del repositorio.
+    """
+    committed = sorted((ROOT / "runs").rglob("human-authorization.md"))
+    assert any("22-auditoria-release-v2" in str(p) for p in committed)
+    repo, bin_dir, log_path = make_repo(tmp_path)
+    for authorization in committed:
+        result = subprocess.run(
+            [powershell(), "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(SCRIPT), "-Slug", SLUG,
+             "-Branch", BRANCH, "-PrNumber", "123", "-SkipLocalCleanup",
+             "-PreAuthorizedHumanMerge", "-AuthorizationPath", str(authorization)],
+            cwd=repo, env=command_env(bin_dir, "review_required", log_path), text=True, capture_output=True,
+            check=False, creationflags=CREATE_NO_WINDOW,
+        )
+        assert result.returncode != 0, authorization
+        assert "invalidada en v2.0.6" in result.stderr + result.stdout, authorization
+    log = log_path.read_text(encoding="utf-8") if log_path.exists() else ""
+    assert "pr merge" not in log
+
+
+def test_merge_is_bound_to_the_verified_head_sha(tmp_path: Path):
+    """v2.0.6 (TOCTOU): 'gh pr merge' lleva --match-head-commit con el SHA aprobado y verificado."""
+    repo, bin_dir, log_path = make_repo(tmp_path)
+
+    result = run_gate(repo, bin_dir, log_path, "success")
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    log = log_path.read_text(encoding="utf-8")
+    assert "pr merge 123 --merge --delete-branch --match-head-commit commitA" in log
