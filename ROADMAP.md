@@ -55,6 +55,13 @@ versionado por tag explícito y manifest anti-drift.
 
 - [x] 24-estabilizacion-definitiva — estabilización de STATUS/integridad y upgrade oficial de consumidores para v2.0.5.
 
+## v2.0.6 — Roadmap activo
+
+Patch de seguridad (M0.0b de AI-NATIVE, P39b/P43; defectos B02/B04/B31). Sin
+capacidades nuevas: corrige los workflows post-HITL y post-merge heredados.
+
+- [x] seguridad-m0-0b — `post-hitl-merge-gate.yml` y `post-merge-close-feature.yml` sin interpolación de `head.ref`, sin ejecutar código de la PR con token de escritura (`pull_request_target` + checkout de la base), y autorización reutilizable por archivo invalidada (la única base es la review APPROVED de GitHub sobre el head vigente). Tests de regresión en `tests/test_workflow_security_v206.py`.
+
 ## Intervenciones transversales v2.0.0
 
 - [x] T01-normalizacion-documental — normalización documental entre F02 y F03; PR #33 mergeada contra develop, no es una fase funcional ni consume numeración del roadmap.

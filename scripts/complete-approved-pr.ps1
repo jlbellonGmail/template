@@ -364,67 +364,20 @@ if ($pr.headRefName -ne $Branch) {
     throw "La PR '$prRef' pertenece a head '$($pr.headRefName)', no a '$Branch'."
 }
 
-function Assert-PreAuthorizedHumanMerge {
-    param([Parameter(Mandatory = $true)][string] $Path, [Parameter(Mandatory = $true)][string] $ExpectedScope)
-    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { throw "No existe la autorizacion previa requerida: $Path" }
-    $authorization = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
-    if ($authorization -notmatch '(?m)^decision:\s*MERGE\s*$' -or
-        $authorization -notmatch "(?m)^scope:\s*$([regex]::Escape($ExpectedScope))\s*$" -or
-        $authorization -notmatch '(?m)^phase:\s*(?:02|03|04|13|14|15|17)\s*$' -or
-        $authorization -notmatch '(?m)^authorizedBy:\s*user-instruction\s*$') {
-        throw "La autorizacion previa no tiene el formato/scope esperado para $ExpectedScope."
-    }
+# v2.0.6 (M0.0b, P39b; defectos B02/B04): la autorizacion reutilizable por archivo queda
+# INVALIDADA. human-authorization.md / independent-review.md / integrity-evidence.md viven en
+# la propia rama de la PR, asi que su autor podia fabricar la "aprobacion humana" y reutilizarla.
+# La unica base de aprobacion valida es una review APPROVED de GitHub (cuenta humana) sobre el
+# commit head vigente, que se consulta en vivo con 'gh pr view'.
+if ($PreAuthorizedHumanMerge -or -not [string]::IsNullOrWhiteSpace($AuthorizationPath) -or
+    -not [string]::IsNullOrWhiteSpace($IndependentReviewPath) -or -not [string]::IsNullOrWhiteSpace($IntegrityEvidencePath)) {
+    throw "La autorizacion previa por archivo (-PreAuthorizedHumanMerge/-AuthorizationPath/-IndependentReviewPath/-IntegrityEvidencePath) fue invalidada en v2.0.6 (B02/B04): la aprobacion debe ser una review APPROVED de GitHub sobre el commit head vigente."
 }
-
-function Assert-SingleMaintainerEvidence {
-    param(
-        [Parameter(Mandatory=$true)][string] $ReviewPath,
-        [Parameter(Mandatory=$true)][string] $IntegrityPath,
-        [Parameter(Mandatory=$true)][string] $ExpectedHead,
-        [Parameter(Mandatory=$true)][string] $ExpectedBase,
-        [Parameter(Mandatory=$true)][string] $ExpectedScope
-    )
-    if (-not (Test-Path -LiteralPath $ReviewPath -PathType Leaf)) {
-        throw "SingleMaintainer requiere Reviewer independiente vigente: $ReviewPath"
-    }
-    $review = Get-Content -LiteralPath $ReviewPath -Raw -Encoding UTF8
-    if ($review -notmatch '(?m)^status:\s*approved\s*$' -or
-        $review -notmatch "(?m)^scope:\s*$([regex]::Escape($ExpectedScope))\s*$" -or
-        ($review -notmatch "(?m)^head:\s*$([regex]::Escape($ExpectedHead))\s*$" -and $review -notmatch '(?m)^head:\s*HEAD\s*$') -or
-        $review -notmatch "(?m)^base:\s*$([regex]::Escape($ExpectedBase))\s*$") {
-        throw "Reviewer independiente ausente, rechazado o stale para '$ExpectedScope'."
-    }
-    if (-not (Test-Path -LiteralPath $IntegrityPath -PathType Leaf)) {
-        throw "SingleMaintainer requiere evidencia check-integrity PASS: $IntegrityPath"
-    }
-    $integrity = Get-Content -LiteralPath $IntegrityPath -Raw -Encoding UTF8
-    if ($integrity -notmatch '(?im)\bPASS\b' -or $integrity -match '(?im)\b(?:FAIL|TIMEOUT|ERROR)\b') {
-        throw "La evidencia de integridad no es PASS vigente: $IntegrityPath"
-    }
-}
-
-$preauthorized = $false
-if ($PreAuthorizedHumanMerge) {
-    if ([string]::IsNullOrWhiteSpace($AuthorizationPath)) { throw "-AuthorizationPath es obligatorio con -PreAuthorizedHumanMerge." }
-    Assert-PreAuthorizedHumanMerge -Path $AuthorizationPath -ExpectedScope $Slug
-    $preauthorized = $true
-    Write-Host "==> Autorizacion humana previa explicita validada para '$Slug'.
-Se conserva la aprobacion HITL normal como requisito por defecto."
-}
-
 if ($GovernanceMode -eq "SingleMaintainer") {
-    if (-not $preauthorized) {
-        throw "SingleMaintainer requiere autorización humana scoped explícita; no se fabrica self-review."
-    }
-    if ([string]::IsNullOrWhiteSpace($IndependentReviewPath) -or [string]::IsNullOrWhiteSpace($IntegrityEvidencePath)) {
-        throw "SingleMaintainer requiere -IndependentReviewPath y -IntegrityEvidencePath."
-    }
-    Assert-SingleMaintainerEvidence -ReviewPath $IndependentReviewPath -IntegrityPath $IntegrityEvidencePath -ExpectedHead $pr.headRefOid -ExpectedBase $BaseBranch -ExpectedScope $Slug
-    Write-Host "==> governance_mode: single-maintainer; approval_basis: scoped-human-authorization + independent-agent-review + CI + integrity"
+    throw "SingleMaintainer dependia de autorizacion por archivo, invalidada en v2.0.6. Un unico maintainer no puede aprobar su propia PR en GitHub: el merge lo ejecuta la cuenta humana manualmente sobre el SHA verificado."
 }
-else {
-    Write-Host "==> governance_mode: multi-maintainer; approval_basis: GitHub human review + CI + integrity"
-}
+$preauthorized = $false
+Write-Host "==> governance_mode: multi-maintainer; approval_basis: GitHub human review + CI + integrity"
 
 if (-not $preauthorized -and $pr.reviewDecision -ne "APPROVED") {
     throw "La PR '$prRef' todavia no tiene aprobacion HITL. reviewDecision=$($pr.reviewDecision)."
