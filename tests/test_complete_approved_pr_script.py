@@ -317,3 +317,14 @@ def test_every_committed_human_authorization_is_inert(tmp_path: Path):
         assert "invalidada en v2.0.6" in result.stderr + result.stdout, authorization
     log = log_path.read_text(encoding="utf-8") if log_path.exists() else ""
     assert "pr merge" not in log
+
+
+def test_merge_is_bound_to_the_verified_head_sha(tmp_path: Path):
+    """v2.0.6 (TOCTOU): 'gh pr merge' lleva --match-head-commit con el SHA aprobado y verificado."""
+    repo, bin_dir, log_path = make_repo(tmp_path)
+
+    result = run_gate(repo, bin_dir, log_path, "success")
+
+    assert result.returncode == 0, result.stderr + result.stdout
+    log = log_path.read_text(encoding="utf-8")
+    assert "pr merge 123 --merge --delete-branch --match-head-commit commitA" in log

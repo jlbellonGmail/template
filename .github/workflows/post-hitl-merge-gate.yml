@@ -25,6 +25,10 @@ name: Post-HITL merge gate
 #   independent-review.md, integrity-evidence.md): esos archivos los controla el
 #   autor de la PR. La unica base de aprobacion es la review APPROVED de GitHub
 #   sobre el commit head vigente (la valida el script con 'gh pr view').
+# - El merge va con --match-head-commit sobre el SHA verificado: un push posterior a la
+#   aprobacion, o durante la espera de checks, hace que GitHub lo rechace.
+# - Limite conocido: 'pull_request_review' toma el workflow de la PR (no existe variante
+#   _target); la review humana aprueba ese head, workflow incluido.
 on:
   pull_request_review:
     types: [submitted]

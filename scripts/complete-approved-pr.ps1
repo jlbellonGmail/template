@@ -434,8 +434,10 @@ $mergeFlag = switch ($MergeMethod) {
     "rebase" { "--rebase" }
 }
 
+# v2.0.6: el merge queda ligado al SHA que se verifico (aprobacion + checks). Si alguien pushea
+# despues de la aprobacion o durante la espera de checks, GitHub rechaza el merge (TOCTOU).
 [void](Invoke-Gh -GitHubCliPath $ghPath -Arguments @(
-    "pr", "merge", $prRef, $mergeFlag, "--delete-branch"
+    "pr", "merge", $prRef, $mergeFlag, "--delete-branch", "--match-head-commit", $pr.headRefOid
 ))
 
 $successReport = Write-GateReport `
