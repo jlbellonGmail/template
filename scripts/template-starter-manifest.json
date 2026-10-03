@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "templateVersion": "v2.0.5",
+  "templateVersion": "v2.0.6",
   "templateRepository": "https://github.com/jlbellonGmail/template.git",
   "sharedPaths": [
     "scripts/status-lib.ps1",
